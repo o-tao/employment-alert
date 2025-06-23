@@ -1,4 +1,4 @@
-package employmentalert.global;
+package employmentalert.global.aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -12,7 +12,8 @@ import org.springframework.util.StopWatch;
 @Component
 public class ExecutionTimeLogger {
 
-    @Around("execution(* employmentalert.api..service..*(..))")
+    @Around("execution(* employmentalert.api..service..*(..)) || " +
+            "execution(* employmentalert.domain.jobPosting.repository..*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch();
         String methodName = joinPoint.getSignature().toShortString();
@@ -23,7 +24,8 @@ public class ExecutionTimeLogger {
             return joinPoint.proceed();
         } finally {
             stopWatch.stop();
-            log.info("⏱️ [{}] 실행 시간: {}ms", methodName, stopWatch.lastTaskInfo().getTimeMillis());
+            String layer = methodName.contains("Repository") ? "쿼리" : "비즈니스 로직";
+            log.info("⏱️ [{}] {} 실행 시간: {}ms", methodName, layer, stopWatch.lastTaskInfo().getTimeMillis());
         }
     }
 }
