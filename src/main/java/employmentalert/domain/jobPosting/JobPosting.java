@@ -47,4 +47,25 @@ public class JobPosting extends BaseEntity {
     @Column(nullable = false)
     private String deadline;
 
+    public static JobPosting create(
+            String company,
+            String title,
+            String url,
+            String career,
+            String education,
+            String employmentType,
+            String region,
+            String deadline
+    ) {
+        JobPosting jobPosting = new JobPosting();
+        jobPosting.company = company;
+        jobPosting.title = title;
+        jobPosting.url = url;
+        jobPosting.career = career;
+        jobPosting.education = education;
+        jobPosting.employmentType = employmentType;
+        jobPosting.region = region;
+        jobPosting.deadline = deadline;
+        return jobPosting;
+    }
 }
