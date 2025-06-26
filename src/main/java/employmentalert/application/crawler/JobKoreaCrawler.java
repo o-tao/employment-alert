@@ -1,6 +1,6 @@
-package employmentalert.api.crawler.service;
+package employmentalert.application.crawler;
 
-import employmentalert.api.crawler.service.dto.JobPostingInfo;
+import employmentalert.application.crawler.dto.JobKoreaPostingInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -17,8 +17,8 @@ import java.util.List;
 @Service
 public class JobKoreaCrawler {
 
-    public List<JobPostingInfo> getJobLinks(String keyword) {
-        List<JobPostingInfo> jobList = new ArrayList<>();
+    public List<JobKoreaPostingInfo> getJobLinks(String keyword) {
+        List<JobKoreaPostingInfo> jobList = new ArrayList<>();
 
         try {
             String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
@@ -68,7 +68,7 @@ public class JobKoreaCrawler {
                     deadline = infoSpans.get(4).text().trim();        // 마감일
                 }
 
-                jobList.add(new JobPostingInfo(company, title, href, career, education, employmentType, region, deadline));
+                jobList.add(new JobKoreaPostingInfo(company, title, href, career, education, employmentType, region, deadline));
             }
 
         } catch (Exception e) {
