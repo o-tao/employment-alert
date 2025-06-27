@@ -8,8 +8,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,12 +15,11 @@ import java.util.List;
 @Service
 public class JobKoreaCrawler {
 
-    public List<JobKoreaPostingInfo> getJobLinks(String keyword) {
+    public List<JobKoreaPostingInfo> getJobLinks() {
         List<JobKoreaPostingInfo> jobList = new ArrayList<>();
 
         try {
-            String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
-            String url = "https://www.jobkorea.co.kr/Search/?ord=RegDtDesc&tabType=recruit&stext=" + encodedKeyword;
+            String url = "https://www.jobkorea.co.kr/Search/?ord=RegDtDesc&tabType=recruit&stext=java";
             Document document = Jsoup.connect(url)
                     .userAgent("Mozilla/5.0")
                     .get();
