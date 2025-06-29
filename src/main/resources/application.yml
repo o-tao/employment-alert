@@ -13,6 +13,13 @@ spring:
         show_sql: true
         format_sql: true
 
+aws:
+  ses:
+    access-key: ${SES_ACCESS_KEY}
+    secret-key: ${SES_SECRET_KEY}
+    send-mail-from: ${ADMIN_EMAIL}
+  region: ${SES_REGION}
+
 logging:
   level:
     org:
