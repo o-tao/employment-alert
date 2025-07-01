@@ -34,4 +34,16 @@ public class User extends BaseEntity {
     @Comment("지역")
     @Column(nullable = true)
     private String region;
+
+    public User(String email, String career, String education, String employmentType, String region) {
+        this.email = email;
+        this.career = career;
+        this.education = education;
+        this.employmentType = employmentType;
+        this.region = region;
+    }
+
+    public static User create(String email, String career, String education, String employmentType, String region) {
+        return new User(email, career, education, employmentType, region);
+    }
 }
