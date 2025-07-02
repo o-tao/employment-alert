@@ -1,7 +1,6 @@
 package employmentalert.domain.notification;
 
 import employmentalert.domain.BaseEntity;
-import employmentalert.domain.jobPosting.JobPosting;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,11 +12,6 @@ import org.hibernate.annotations.Comment;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "notification_history")
 public class NotificationHistory extends BaseEntity {
-
-    @Comment("연관된 채용 공고")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "job_posting_id", nullable = false)
-    private JobPosting jobPosting;
 
     @Comment("수신자 이메일 주소")
     @Column(nullable = false)
@@ -44,15 +38,13 @@ public class NotificationHistory extends BaseEntity {
     @Column(nullable = true)
     private String errorMessage;
 
-    public NotificationHistory(JobPosting jobPosting,
-                               String recipientEmail,
+    public NotificationHistory(String recipientEmail,
                                String subject,
                                String content,
                                NotificationChannel notificationChannel,
                                String errorMessage,
                                boolean status
     ) {
-        this.jobPosting = jobPosting;
         this.recipientEmail = recipientEmail;
         this.subject = subject;
         this.content = content;
