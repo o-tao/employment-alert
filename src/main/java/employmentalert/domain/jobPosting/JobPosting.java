@@ -28,23 +28,23 @@ public class JobPosting extends BaseEntity {
     private String url;
 
     @Comment("경력사항")
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String career;
 
     @Comment("학력")
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String education;
 
     @Comment("고용 형태")
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String employmentType;
 
     @Comment("지역")
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String region;
 
     @Comment("공고 마감일")
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String deadline;
 
     public static JobPosting create(
