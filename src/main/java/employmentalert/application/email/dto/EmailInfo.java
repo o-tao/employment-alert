@@ -11,17 +11,17 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EmailInfo {
 
-    private List<String> to;
+    private List<String> recipientEmail;
     private String subject;
     private String content;
 
-    public EmailInfo(List<String> to, String subject, String content) {
-        this.to = to;
+    public EmailInfo(List<String> recipientEmail, String subject, String content) {
+        this.recipientEmail = recipientEmail;
         this.subject = subject;
         this.content = content;
     }
 
     public EmailSendRequest toSend() {
-        return new EmailSendRequest(to, subject, content);
+        return new EmailSendRequest(recipientEmail, subject, content);
     }
 }

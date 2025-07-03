@@ -53,4 +53,40 @@ public class NotificationHistory extends BaseEntity {
         this.status = status;
     }
 
+    /**
+     * 알림 발송 성공 이력 생성
+     */
+    public static NotificationHistory success(String recipient,
+                                              String subject,
+                                              String content,
+                                              NotificationChannel notificationChannel
+    ) {
+        return new NotificationHistory(
+                recipient,
+                subject,
+                content,
+                notificationChannel,
+                null,
+                true
+        );
+    }
+
+    /**
+     * 알림 발송 실패 이력 생성
+     */
+    public static NotificationHistory fail(String recipient,
+                                           String subject,
+                                           String content,
+                                           NotificationChannel notificationChannel,
+                                           String errorMessage
+    ) {
+        return new NotificationHistory(
+                recipient,
+                subject,
+                content,
+                notificationChannel,
+                errorMessage,
+                false
+        );
+    }
 }

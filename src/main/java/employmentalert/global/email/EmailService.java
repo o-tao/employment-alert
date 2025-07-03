@@ -1,6 +1,8 @@
 package employmentalert.global.email;
 
 import employmentalert.global.email.dto.EmailSendRequest;
+import employmentalert.global.exception.EmploymentAlertException;
+import employmentalert.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +21,9 @@ public class EmailService {
     @Value("${aws.ses.send-mail-from}")
     private String sender;
 
+    /**
+     * 이메일 발송
+     */
     public void sendEmail(EmailSendRequest emailSendRequest) {
         try {
             sesClient.sendEmail(toSendEmailRequest(
@@ -28,12 +33,14 @@ public class EmailService {
                     emailSendRequest.getContent()
             ));
         } catch (Exception exception) {
-            log.error("이메일 전송 실패", exception);
+            throw new EmploymentAlertException(ErrorCode.EMAIL_SEND_FAILED);
         }
     }
 
-    // SES 에서 제공하는 이메일 전송 요청
-    public SendEmailRequest toSendEmailRequest(String sender, List<String> to, String subject, String content) {
+    /**
+     * SES 에서 제공하는 이메일 전송 요청
+     */
+    private SendEmailRequest toSendEmailRequest(String sender, List<String> to, String subject, String content) {
         Destination destination = Destination.builder()
                 .toAddresses(to)
                 .build();
