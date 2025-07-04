@@ -19,6 +19,9 @@ public class JobKoreaService {
     private final JobPostingRepository jobPostingRepository;
     private final JobPostingQueryRepository jobPostingQueryRepository;
 
+    /**
+     * 중복되지 않은 채용공고 저장
+     */
     public void saveAll(List<JobKoreaPostingInfo> jobKoreaPostingInfos) {
         Set<String> urls = jobPostingQueryRepository.existingUrls(
                 jobKoreaPostingInfos.stream()
