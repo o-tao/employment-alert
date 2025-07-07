@@ -28,7 +28,7 @@ public class EmailService {
         try {
             sesClient.sendEmail(toSendEmailRequest(
                     sender,
-                    emailSendRequest.getTo(),
+                    emailSendRequest.getRecipient(),
                     emailSendRequest.getSubject(),
                     emailSendRequest.getContent()
             ));

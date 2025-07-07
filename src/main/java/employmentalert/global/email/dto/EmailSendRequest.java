@@ -10,12 +10,12 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class EmailSendRequest {
 
-    private List<String> to;
+    private List<String> recipient;
     private String subject;
     private String content;
 
-    public EmailSendRequest(List<String> to, String subject, String content) {
-        this.to = to;
+    public EmailSendRequest(List<String> recipient, String subject, String content) {
+        this.recipient = recipient;
         this.subject = subject;
         this.content = content;
     }

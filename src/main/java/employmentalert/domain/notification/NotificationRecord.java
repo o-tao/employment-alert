@@ -40,7 +40,6 @@ public class NotificationRecord extends BaseEntity {
      * 로그 매핑 정보 저장
      */
     public static NotificationRecord create(User user, JobPosting jobPosting, NotificationHistory history) {
-        return new NotificationRecord(user, jobPosting, history
-        );
+        return new NotificationRecord(user, jobPosting, history);
     }
 }
