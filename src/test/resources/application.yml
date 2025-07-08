@@ -1,4 +1,7 @@
 spring:
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
     url: jdbc:h2:mem:test
     username: sa
@@ -13,6 +16,13 @@ spring:
         show_sql: true
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect
+
+aws:
+  ses:
+    access-key: ${SES_ACCESS_KEY}
+    secret-key: ${SES_SECRET_KEY}
+    send-mail-from: ${ADMIN_EMAIL}
+  region: ${SES_REGION}
 
 logging:
   level:
