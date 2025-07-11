@@ -12,7 +12,7 @@ import org.hibernate.annotations.Comment;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "user")
+@Table(name = "users")
 public class User extends BaseEntity {
 
     @Comment("이메일")

@@ -11,7 +11,7 @@ import org.hibernate.annotations.Comment;
 
 @Entity
 @Getter
-@Table(name = "job_posting")
+@Table(name = "job_postings")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class JobPosting extends BaseEntity {
 
@@ -47,6 +47,25 @@ public class JobPosting extends BaseEntity {
     @Column(nullable = true)
     private String deadline;
 
+    public JobPosting(String company,
+                      String title,
+                      String url,
+                      String career,
+                      String education,
+                      String employmentType,
+                      String region,
+                      String deadline
+    ) {
+        this.company = company;
+        this.title = title;
+        this.url = url;
+        this.career = career;
+        this.education = education;
+        this.employmentType = employmentType;
+        this.region = region;
+        this.deadline = deadline;
+    }
+
     public static JobPosting create(
             String company,
             String title,
@@ -57,15 +76,14 @@ public class JobPosting extends BaseEntity {
             String region,
             String deadline
     ) {
-        JobPosting jobPosting = new JobPosting();
-        jobPosting.company = company;
-        jobPosting.title = title;
-        jobPosting.url = url;
-        jobPosting.career = career;
-        jobPosting.education = education;
-        jobPosting.employmentType = employmentType;
-        jobPosting.region = region;
-        jobPosting.deadline = deadline;
-        return jobPosting;
+        return new JobPosting(
+                company,
+                title,
+                url,
+                career,
+                education,
+                employmentType,
+                region,
+                deadline);
     }
 }

@@ -10,7 +10,7 @@ import org.hibernate.annotations.Comment;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "notification_history")
+@Table(name = "notification_histories")
 public class NotificationHistory extends BaseEntity {
 
     @Comment("수신자 이메일 주소")
