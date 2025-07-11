@@ -80,7 +80,7 @@ public class JobPostingEmailService {
                     exception.getMessage()
             );
 
-            log.error("이메일 발송 실패 recipientEmail {}, 이유: {}", user.getEmail(), exception.getMessage(), exception);
+            log.error("이메일 발송 실패 recipientEmail: {}", user.getEmail(), exception);
         }
     }
 
