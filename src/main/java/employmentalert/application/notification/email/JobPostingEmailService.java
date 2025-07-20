@@ -1,6 +1,7 @@
-package employmentalert.application.notification;
+package employmentalert.application.notification.email;
 
 import employmentalert.api.user.service.UserService;
+import employmentalert.application.notification.NotificationService;
 import employmentalert.application.notification.dto.EmailInfo;
 import employmentalert.domain.jobPosting.JobPosting;
 import employmentalert.domain.jobPosting.repository.JobPostingQueryRepository;
@@ -24,6 +25,7 @@ public class JobPostingEmailService {
     private final EmailService emailService;
     private final UserService userService;
     private final NotificationService notificationService;
+    private final EmailTemplateService emailTemplateService;
 
     /**
      * 등록된 유저에게 채용공고 이메일 발송
@@ -44,7 +46,7 @@ public class JobPostingEmailService {
         if (unsentJobPostings.isEmpty()) return;
 
         String subject = "[📨채용공고] 새로운 공고 %d건이 도착했어요!".formatted(unsentJobPostings.size());
-        String content = buildEmailContent(unsentJobPostings);
+        String content = emailTemplateService.buildJobPostingEmailContent(unsentJobPostings);
 
         sendEmailAndRecord(user, unsentJobPostings, subject, content);
     }
@@ -82,39 +84,5 @@ public class JobPostingEmailService {
 
             log.error("이메일 발송 실패 recipientEmail: {}", user.getEmail(), exception);
         }
-    }
-
-    /**
-     * 임시로직
-     */
-    private String buildEmailContent(List<JobPosting> jobPostings) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("📢 새로운 채용 공고가 등록되었습니다!\n\n");
-
-        for (JobPosting job : jobPostings) {
-            builder.append("""
-                    🔹 회사명: %s \n
-                    🔹 제목: %s \n
-                    🔹 경력: %s \n
-                    🔹 학력: %s \n
-                    🔹 고용 형태: %s \n
-                    🔹 지역: %s \n
-                    🔹 마감일: %s \n
-                    ▶ 상세보기: %s \n
-                    \n
-                    """.formatted(
-                    job.getCompany(),
-                    job.getTitle(),
-                    job.getCareer(),
-                    job.getEducation(),
-                    job.getEmploymentType(),
-                    job.getRegion(),
-                    job.getDeadline(),
-                    job.getUrl()
-            ));
-        }
-
-        builder.append("좋은 기회가 되길 바랍니다!\n");
-        return builder.toString();
     }
 }

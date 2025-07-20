@@ -1,6 +1,7 @@
 package employmentalert.application.notification;
 
 import employmentalert.api.user.service.UserService;
+import employmentalert.application.notification.email.JobPostingEmailService;
 import employmentalert.domain.jobPosting.JobPosting;
 import employmentalert.domain.jobPosting.repository.JobPostingQueryRepository;
 import employmentalert.domain.notification.NotificationChannel;
