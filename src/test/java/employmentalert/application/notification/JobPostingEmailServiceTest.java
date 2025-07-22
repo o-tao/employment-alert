@@ -1,6 +1,7 @@
 package employmentalert.application.notification;
 
 import employmentalert.api.user.service.UserService;
+import employmentalert.application.notification.email.EmailTemplateService;
 import employmentalert.application.notification.email.JobPostingEmailService;
 import employmentalert.domain.jobPosting.JobPosting;
 import employmentalert.domain.jobPosting.repository.JobPostingQueryRepository;
@@ -42,6 +43,8 @@ class JobPostingEmailServiceTest {
     private UserService userService;
     @Mock
     private NotificationService notificationService;
+    @Mock
+    private EmailTemplateService emailTemplateService;
 
     @BeforeEach
     void setUp() {
@@ -82,6 +85,8 @@ class JobPostingEmailServiceTest {
     void sendEmailAndRecordSuccess() {
         // given
         when(jobPostingQueryRepository.findUnsentJobPostings(anyString())).thenReturn(postings);
+        when(emailTemplateService.buildJobPostingEmailContent(anyList()))
+                .thenReturn("테스트 이메일 내용");
 
         NotificationHistory successHistory = mock(NotificationHistory.class);
         when(notificationService.success(
@@ -109,7 +114,7 @@ class JobPostingEmailServiceTest {
         );
 
         assertThat(subject.getValue()).contains("채용공고");
-        assertThat(content.getValue()).contains("회사명");
+        assertThat(content.getValue()).contains("테스트 이메일 내용");
         assertThat(notificationChannel.getValue()).isEqualTo(NotificationChannel.EMAIL);
 
         verify(notificationService, times(postings.size()))
@@ -121,6 +126,8 @@ class JobPostingEmailServiceTest {
     void sendEmailAndRecordFail() {
         // given
         when(jobPostingQueryRepository.findUnsentJobPostings(anyString())).thenReturn(postings);
+        when(emailTemplateService.buildJobPostingEmailContent(anyList()))
+                .thenReturn("테스트 이메일 내용");
         doThrow(new RuntimeException("Exception")).when(emailService).sendEmail(any());
 
         // when
