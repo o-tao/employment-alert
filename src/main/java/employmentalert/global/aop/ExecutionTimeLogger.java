@@ -13,7 +13,7 @@ import org.springframework.util.StopWatch;
 public class ExecutionTimeLogger {
 
     @Around("execution(* employmentalert.api..service..*(..)) || " +
-            "execution(* employmentalert.domain.jobPosting.repository..*(..)) ||" +
+            "execution(* employmentalert.domain..repository..*(..)) ||" +
             "execution(* employmentalert.application..*(..))")
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch();

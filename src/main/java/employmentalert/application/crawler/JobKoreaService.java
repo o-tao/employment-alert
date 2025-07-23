@@ -7,6 +7,7 @@ import employmentalert.domain.jobPosting.repository.JobPostingRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class JobKoreaService {
 
     private final JobPostingRepository jobPostingRepository;
@@ -22,6 +24,7 @@ public class JobKoreaService {
     /**
      * 중복되지 않은 채용공고 저장
      */
+    @Transactional
     public void saveAll(List<JobKoreaPostingInfo> jobKoreaPostingInfos) {
         Set<String> urls = jobPostingQueryRepository.existingUrls(
                 jobKoreaPostingInfos.stream()
@@ -51,5 +54,20 @@ public class JobKoreaService {
         );
 
         log.info("저장된 공고 수 : {}", createJobPostings.size());
+    }
+
+    /**
+     * 공고 삭제
+     */
+    @Transactional
+    public void deleteJobPostings(List<Long> jobPostingIds) {
+        jobPostingQueryRepository.deleteByIds(jobPostingIds);
+    }
+
+    /**
+     * 알림 발송 이력이 있는 공고 조회
+     */
+    public List<Long> findJobPostingIdsByNotificationHistoryIds(List<Long> historyIds) {
+        return jobPostingQueryRepository.findJobPostingIdsByNotificationHistoryIds(historyIds);
     }
 }
