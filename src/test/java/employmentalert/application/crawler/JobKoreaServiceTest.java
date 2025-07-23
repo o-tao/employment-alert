@@ -3,6 +3,13 @@ package employmentalert.application.crawler;
 import employmentalert.application.crawler.dto.JobKoreaPostingInfo;
 import employmentalert.domain.jobPosting.JobPosting;
 import employmentalert.domain.jobPosting.repository.JobPostingRepository;
+import employmentalert.domain.notification.NotificationChannel;
+import employmentalert.domain.notification.NotificationHistory;
+import employmentalert.domain.notification.NotificationRecord;
+import employmentalert.domain.notification.repository.NotificationHistoryRepository;
+import employmentalert.domain.notification.repository.NotificationRecordRepository;
+import employmentalert.domain.user.User;
+import employmentalert.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,10 +27,19 @@ class JobKoreaServiceTest {
     private JobKoreaService jobKoreaService;
     @Autowired
     private JobPostingRepository jobPostingRepository;
+    @Autowired
+    private NotificationHistoryRepository notificationHistoryRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private NotificationRecordRepository notificationRecordRepository;
 
     @AfterEach
     public void clear() {
+        notificationRecordRepository.deleteAllInBatch();
+        notificationHistoryRepository.deleteAllInBatch();
         jobPostingRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @Test
@@ -93,6 +109,51 @@ class JobKoreaServiceTest {
         // then
         List<JobPosting> saved = jobPostingRepository.findAll();
         assertThat(saved).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("알림 발송 이력이 존재하는 공고 ID만 조회된다.")
+    void findJobPostingIdsByNotificationHistoryIdsTest() {
+        // given
+        JobPosting postingWithHistory = jobPostingRepository.save(
+                JobPosting.create("company1", "title1", "test1.com", "career", "education", "employmentType", "region", "deadline")
+        );
+        JobPosting postingWithoutHistory = jobPostingRepository.save(
+                JobPosting.create("company2", "title2", "test2.com", "career", "education", "employmentType", "region", "deadline")
+        );
+
+        NotificationHistory history = notificationHistoryRepository.save(
+                NotificationHistory.success("user@test.com", "subject", "content", NotificationChannel.EMAIL)
+        );
+        User user = userRepository.save(User.create("user@test.com", "career", "education", "employment", "region"));
+        notificationRecordRepository.save(NotificationRecord.create(user, postingWithHistory, history));
+
+        // when
+        List<Long> result = jobKoreaService.findJobPostingIdsByNotificationHistoryIds(List.of(history.getId()));
+
+        // then
+        assertThat(result).containsExactly(postingWithHistory.getId());
+        assertThat(result).doesNotContain(postingWithoutHistory.getId());
+    }
+
+    @Test
+    @DisplayName("전달된 공고 ID 리스트에 해당하는 공고가 삭제된다.")
+    void deleteJobPostingsByIdsTest() {
+        // given
+        JobPosting jobPosting1 = jobPostingRepository.save(
+                JobPosting.create("company1", "title1", "test1.com", "career", "education", "employmentType", "region", "deadline")
+        );
+        JobPosting jobPosting2 = jobPostingRepository.save(
+                JobPosting.create("company2", "title2", "test2.com", "career", "education", "employmentType", "region", "deadline")
+        );
+
+        // when
+        jobKoreaService.deleteJobPostings(List.of(jobPosting1.getId()));
+
+        // then
+        List<JobPosting> jobPostings = jobPostingRepository.findAll();
+        assertThat(jobPostings).hasSize(1);
+        assertThat(jobPostings.getFirst().getId()).isEqualTo(jobPosting2.getId());
     }
 
 }

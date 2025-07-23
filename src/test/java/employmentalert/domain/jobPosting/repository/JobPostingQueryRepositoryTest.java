@@ -128,4 +128,51 @@ class JobPostingQueryRepositoryTest {
         assertThat(jobPosting).containsExactly(unsentPosting);
         assertThat(jobPosting).doesNotContain(sentPosting);
     }
+
+    @Test
+    @DisplayName("알림 발송 이력이 존재하는 공고 ID만 조회한다.")
+    public void findJobPostingIdsByNotificationHistoryIdsTest() {
+        // given
+        JobPosting postingWithHistory = jobPostingRepository.save(JobPosting.create(
+                "company1", "title1", "url1", "career", "education", "employment", "region", "deadline"
+        ));
+        JobPosting postingWithoutHistory = jobPostingRepository.save(JobPosting.create(
+                "company2", "title2", "url2", "career", "education", "employment", "region", "deadline"
+        ));
+
+        User user = userRepository.save(new User("user@example.com", "career", "education", "employment", "region"));
+
+        NotificationHistory history = notificationHistoryRepository.save(
+                NotificationHistory.success("user@example.com", "subject", "content", NotificationChannel.EMAIL)
+        );
+
+        notificationRecordRepository.save(NotificationRecord.create(user, postingWithHistory, history));
+
+        // when
+        List<Long> result = jobPostingQueryRepository.findJobPostingIdsByNotificationHistoryIds(List.of(history.getId()));
+
+        // then
+        assertThat(result).containsExactly(postingWithHistory.getId());
+        assertThat(result).doesNotContain(postingWithoutHistory.getId());
+    }
+
+    @Test
+    @DisplayName("채용공고 ID 리스트를 전달하면 해당 공고들이 삭제된다.")
+    public void deleteByIdsTest() {
+        // given
+        JobPosting jobPosting1 = jobPostingRepository.save(JobPosting.create(
+                "company1", "title1", "url1", "career", "education", "employment", "region", "deadline"
+        ));
+        JobPosting jobPosting2 = jobPostingRepository.save(JobPosting.create(
+                "company2", "title2", "url2", "career", "education", "employment", "region", "deadline"
+        ));
+
+        // when
+        jobPostingQueryRepository.deleteByIds(List.of(jobPosting1.getId()));
+
+        // then
+        List<JobPosting> jobPostings = jobPostingRepository.findAll();
+        assertThat(jobPostings).containsExactly(jobPosting2);
+        assertThat(jobPostings).doesNotContain(jobPosting1);
+    }
 }

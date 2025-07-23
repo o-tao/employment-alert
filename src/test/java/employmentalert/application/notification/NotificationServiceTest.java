@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -128,6 +129,32 @@ class NotificationServiceTest {
         assertThat(record.getUser()).isEqualTo(user);
         assertThat(record.getJobPosting()).isEqualTo(jobPosting);
         assertThat(record.getNotificationHistory()).isEqualTo(history);
+    }
+
+    @Test
+    @DisplayName("기준일 이전의 알림 매핑 정보, 히스토리, 채용공고가 모두 삭제된다.")
+    void cleanUpExpiredNotificationsTest() {
+        // given
+        User user = userRepository.save(
+                User.create("test@example.com", "career", "education", "employmentType", "region")
+        );
+        JobPosting jobPosting = jobPostingRepository.save(
+                JobPosting.create("company", "title", "test@example.com", "career", "education", "employmentType", "region", "deadline")
+        );
+        NotificationHistory notificationHistory = notificationHistoryRepository.save(
+                NotificationHistory.success("test@example.com", "subject", "content", NotificationChannel.EMAIL)
+        );
+        notificationRecordRepository.save(
+                NotificationRecord.create(user, jobPosting, notificationHistory)
+        );
+
+        // when
+        notificationService.cleanUpExpiredNotifications(LocalDateTime.now());
+
+        // then
+        assertThat(notificationHistoryRepository.findAll()).isEmpty();
+        assertThat(notificationRecordRepository.findAll()).isEmpty();
+        assertThat(jobPostingRepository.findAll()).isEmpty();
     }
 
 }
